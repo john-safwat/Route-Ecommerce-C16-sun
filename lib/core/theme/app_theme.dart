@@ -134,7 +134,6 @@ class AppTheme {
         surface: AppColors.white,
         onSurface: AppColors.blue,
       ),
-
     );
   }
 }

@@ -8,6 +8,9 @@ import 'package:route_e_commerce_v2/features/auth/presentation/login/login_view.
 import 'package:route_e_commerce_v2/features/auth/presentation/register/register_cubit.dart';
 import 'package:route_e_commerce_v2/features/auth/presentation/register/register_view.dart';
 
+import 'package:route_e_commerce_v2/core/routing/routes.dart';
+import 'package:route_e_commerce_v2/features/navigation_layout/navigation_view.dart';
+
 abstract class AppRouter {
   static Route generateRoute(RouteSettings settings) {
     if (kDebugMode) {
@@ -17,6 +20,11 @@ abstract class AppRouter {
     final uri = Uri.parse(settings.name ?? '/');
 
     switch (uri.path) {
+      case Routes.navigationRoute:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const NavigationView(),
+        );
       case Routes.loginRoute:
         {
           var cubit = getIt<LoginCubit>();
