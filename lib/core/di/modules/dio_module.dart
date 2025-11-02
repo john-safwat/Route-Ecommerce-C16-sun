@@ -15,6 +15,9 @@ abstract class DioModule {
       connectTimeout: const Duration(seconds: 180),
       receiveTimeout:const Duration(seconds: 180),
       baseUrl: "https://ecommerce.routemisr.com",
+      validateStatus: (_){
+        return true;
+      }
     );
 
     dio.interceptors.add(getIt<PrettyDioLogger>());

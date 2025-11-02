@@ -8,4 +8,6 @@ abstract interface class AuthRepo {
     String password,
     String rePassword,
   );
+
+  Future<ApiResults<String>> signIn(String email, String password);
 }

@@ -1,17 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:route_e_commerce_v2/core/base_cubit.dart';
 import 'package:route_e_commerce_v2/core/network/Resources.dart';
 import 'package:route_e_commerce_v2/core/network/api_results.dart';
 import 'package:route_e_commerce_v2/features/auth/domain/use_cases/signup_use_case.dart';
 import 'package:route_e_commerce_v2/features/auth/presentation/register/register_state.dart';
 
 @injectable
-class RegisterCubit extends Cubit<RegisterState> {
+class RegisterCubit extends BaseCubit<RegisterState , RegisterEvents , RegistrationNavigationEvent> {
   SignupUseCase signupUseCase;
-
   RegisterCubit(this.signupUseCase) : super(RegisterState());
 
-  Future<void> doIntent(RegisterEvents event) async {
+
+
+  @override
+  Future<void> doAction(RegisterEvents event) async {
     switch (event) {
       case ChangePasswordVisibilityEvent():
         {
@@ -33,7 +38,7 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
   void _navigateToLogin() {
-    emit(state.copyWith(navigateToLogin: true));
+    doNavigationAction(NavigateToLogin());
   }
 
   Future<void> _register(SignUpEvent event) async {
@@ -53,6 +58,7 @@ class RegisterCubit extends Cubit<RegisterState> {
               registerResources: Resources.success(data: response.data),
             ),
           );
+          doNavigationAction(NavigateToLogin());
         }
       case Fail<String>():
         {

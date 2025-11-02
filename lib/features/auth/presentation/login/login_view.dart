@@ -1,32 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:route_e_commerce_v2/core/network/Resources.dart';
 import 'package:route_e_commerce_v2/core/routing/routes.dart';
 import 'package:route_e_commerce_v2/core/theme/app_colors.dart';
+import 'package:route_e_commerce_v2/core/utils/validation.dart';
 import 'package:route_e_commerce_v2/core/utils/white_space.dart';
 import 'package:route_e_commerce_v2/features/auth/presentation/login/login_cubit.dart';
 import 'package:route_e_commerce_v2/features/auth/presentation/login/login_states.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
   final LoginCubit cubit;
 
   const LoginView({required this.cubit, super.key});
 
   @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  final TextEditingController emailController = TextEditingController();
+
+  final TextEditingController passwordController = TextEditingController();
+
+  bool visible = false;
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    widget.cubit.navigationStream.listen((navigationEvent) {
+      switch (navigationEvent) {
+        case NavigateToRegister():
+          {
+            Navigator.pushReplacementNamed(context, Routes.registerRoute);
+          }
+        case NavigateToHome():
+          {
+            // todo add navigation to home screen
+          }
+        case ShowErrorMessage():
+          {
+            showDialog(
+              context: context,
+              builder:
+                  (context) => AlertDialog(
+                    title: const Text("Error"),
+                    content: Text(navigationEvent.message),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text("ok"),
+                      ),
+                    ],
+                  ),
+            );
+          }
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocListener<LoginCubit, LoginStates>(
-      listener: (context, state) {
-        if (state.navigateToRegister) {
-          Navigator.pushReplacementNamed(context, Routes.registerRoute);
-        }
-      },
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        body: ListView(
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      body: Form(
+        key: formKey,
+        child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            SafeArea(
-              child: Image.asset("assets/images/route_login_logo.png"),
-            ),
+            SafeArea(child: Image.asset("assets/images/route_login_logo.png")),
             16.spaceVertical,
             Text(
               "Welcome Back To Route",
@@ -44,14 +89,17 @@ class LoginView extends StatelessWidget {
             ),
             24.spaceVertical,
             Text(
-              "UserName",
+              "Email",
               style: Theme.of(
                 context,
               ).textTheme.titleLarge!.copyWith(color: AppColors.white),
             ),
             8.spaceVertical,
             TextFormField(
-              decoration: const InputDecoration(hintText: "enter your name"),
+              controller: emailController,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) => Validation.validateEmail(value),
+              decoration: const InputDecoration(hintText: "enter your email"),
             ),
             24.spaceVertical,
             Text(
@@ -62,9 +110,23 @@ class LoginView extends StatelessWidget {
             ),
             8.spaceVertical,
             TextFormField(
-              decoration: const InputDecoration(
+              controller: passwordController,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) => Validation.validatePassword(value),
+              obscureText: !visible,
+              decoration: InputDecoration(
                 hintText: "enter your Password",
-                suffixIcon: Icon(Icons.visibility, color: AppColors.grey),
+                suffixIcon: InkWell(
+                  onTap: () {
+                    setState(() {
+                      visible = !visible;
+                    });
+                  },
+                  child: Icon(
+                    visible ? Icons.visibility : Icons.visibility_off,
+                    color: AppColors.grey,
+                  ),
+                ),
               ),
             ),
             8.spaceVertical,
@@ -81,16 +143,26 @@ class LoginView extends StatelessWidget {
               ),
             ),
             8.spaceVertical,
-            ElevatedButton(
-              onPressed: () {
-                // todo login user
-              },
-              child: const Text("Login"),
+            BlocBuilder<LoginCubit, LoginStates>(
+              builder:
+                  (context, state) => ElevatedButton(
+                    onPressed: () {
+                      if (state.loginResource.status == Status.loading) return;
+                      if (formKey.currentState!.validate()) {
+                        widget.cubit.doAction(
+                          Login(emailController.text, passwordController.text),
+                        );
+                      }
+                    },
+                    child: state.loginResource.status == Status.loading? CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.primary,
+                    ): Text("Login"),
+                  ),
             ),
             16.spaceVertical,
             TextButton(
               onPressed: () {
-                cubit.doIntent(NavigateToRegisterScreenEvent());
+                widget.cubit.doAction(NavigateToRegisterScreenEvent());
               },
               child: const Text(
                 'Don’t have an account? Create Account',

@@ -28,6 +28,7 @@ import '../../features/auth/data/datasource/remote_datasource/auth_remote_data_s
 import '../../features/auth/data/mapper/auth_mapper.dart' as _i496;
 import '../../features/auth/data/repository/auth_repo_impl.dart' as _i751;
 import '../../features/auth/domain/repository/auth_repo.dart' as _i976;
+import '../../features/auth/domain/use_cases/signin_use_case.dart' as _i633;
 import '../../features/auth/domain/use_cases/signup_use_case.dart' as _i571;
 import '../../features/auth/presentation/login/login_cubit.dart' as _i644;
 import '../../features/auth/presentation/register/register_cubit.dart' as _i837;
@@ -54,7 +55,6 @@ extension GetItInjectableX on _i174.GetIt {
       preResolve: true,
     );
     gh.factory<_i496.AuthMapper>(() => _i496.AuthMapper());
-    gh.factory<_i644.LoginCubit>(() => _i644.LoginCubit());
     gh.factory<_i128.AuthLocalDatasource>(
       () => _i750.AuthLocalDatasourceImpl(gh<_i460.SharedPreferences>()),
     );
@@ -73,6 +73,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i571.SignupUseCase>(
       () => _i571.SignupUseCase(gh<_i976.AuthRepo>()),
+    );
+    gh.factory<_i633.SignInUseCase>(
+      () => _i633.SignInUseCase(gh<_i976.AuthRepo>()),
+    );
+    gh.factory<_i644.LoginCubit>(
+      () => _i644.LoginCubit(gh<_i633.SignInUseCase>()),
     );
     gh.factory<_i837.RegisterCubit>(
       () => _i837.RegisterCubit(gh<_i571.SignupUseCase>()),

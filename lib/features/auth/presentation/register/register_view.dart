@@ -8,18 +8,40 @@ import 'package:route_e_commerce_v2/core/utils/white_space.dart';
 import 'package:route_e_commerce_v2/features/auth/presentation/register/register_cubit.dart';
 import 'package:route_e_commerce_v2/features/auth/presentation/register/register_state.dart';
 
-class RegisterView extends StatelessWidget {
+class RegisterView extends StatefulWidget {
   final RegisterCubit cubit;
 
   RegisterView({required this.cubit, super.key});
 
+  @override
+  State<RegisterView> createState() => _RegisterViewState();
+}
+
+class _RegisterViewState extends State<RegisterView> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   final TextEditingController nameController = TextEditingController();
+
   final TextEditingController phoneController = TextEditingController();
+
   final TextEditingController emailController = TextEditingController();
+
   final TextEditingController passwordController = TextEditingController();
+
   final TextEditingController rePasswordController = TextEditingController();
 
+
+  @override
+  void initState() {
+    super.initState();
+    widget.cubit.navigationStream.listen((navigationEvent){
+      switch (navigationEvent) {
+        case NavigateToLogin():{
+          Navigator.pushReplacementNamed(context, Routes.loginRoute);
+        }
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<RegisterCubit, RegisterState>(
@@ -41,9 +63,6 @@ class RegisterView extends StatelessWidget {
                   ],
                 ),
           );
-        } else if (state.registerResources.status == Status.success ||
-            state.navigateToLogin) {
-          Navigator.pushReplacementNamed(context, Routes.loginRoute);
         }
       },
       builder:
@@ -123,7 +142,7 @@ class RegisterView extends StatelessWidget {
                       hintText: "enter your Password",
                       suffixIcon: InkWell(
                         onTap: () {
-                          cubit.doIntent(ChangePasswordVisibilityEvent());
+                          widget.cubit.doAction(ChangePasswordVisibilityEvent());
                         },
                         child: Icon(
                           state.passwordVisible
@@ -155,7 +174,7 @@ class RegisterView extends StatelessWidget {
                       hintText: "enter your Password",
                       suffixIcon: InkWell(
                         onTap: () {
-                          cubit.doIntent(ChangeRePasswordVisibilityEvent());
+                          widget.cubit.doAction(ChangeRePasswordVisibilityEvent());
                         },
                         child: Icon(
                           state.rePasswordVisible
@@ -171,7 +190,7 @@ class RegisterView extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
-                        cubit.doIntent(
+                        widget.cubit.doAction(
                           SignUpEvent(
                             nameController.text,
                             emailController.text,
@@ -190,7 +209,7 @@ class RegisterView extends StatelessWidget {
                   16.spaceVertical,
                   TextButton(
                     onPressed: () {
-                      cubit.doIntent(NavigateToLoginEvent());
+                      widget.cubit.doAction(NavigateToLoginEvent());
                     },
                     child: const Text(
                       'Already Have Account? Login',

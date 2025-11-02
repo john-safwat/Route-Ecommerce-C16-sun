@@ -4,26 +4,22 @@ class RegisterState {
   bool passwordVisible;
   bool rePasswordVisible;
   Resources<String> registerResources;
-  bool navigateToLogin;
 
   RegisterState({
     this.passwordVisible = false,
     this.rePasswordVisible = false,
     this.registerResources = const Resources.initial(),
-    this.navigateToLogin = false,
   });
 
   RegisterState copyWith({
     bool? passwordVisible,
     bool? rePasswordVisible,
     Resources<String>? registerResources,
-    bool? navigateToLogin,
   }) {
     return RegisterState(
       passwordVisible: passwordVisible ?? this.passwordVisible,
       rePasswordVisible: rePasswordVisible ?? this.rePasswordVisible,
       registerResources: registerResources ?? this.registerResources,
-      navigateToLogin: navigateToLogin ?? this.navigateToLogin,
     );
   }
 }
@@ -50,3 +46,7 @@ class SignUpEvent extends RegisterEvents {
     this.rePassword,
   );
 }
+
+
+sealed class RegistrationNavigationEvent{}
+class NavigateToLogin extends RegistrationNavigationEvent{}

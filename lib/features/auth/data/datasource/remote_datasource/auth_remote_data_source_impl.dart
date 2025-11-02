@@ -5,6 +5,7 @@ import 'package:route_e_commerce_v2/core/network/app_errors.dart';
 import 'package:route_e_commerce_v2/core/network/safe_call.dart';
 import 'package:route_e_commerce_v2/features/auth/data/datasource/models/auth_response_dto.dart';
 import 'package:route_e_commerce_v2/features/auth/data/datasource/models/register_request_dto.dart';
+import 'package:route_e_commerce_v2/features/auth/data/datasource/models/signin_request_dto.dart';
 import 'package:route_e_commerce_v2/features/auth/data/datasource/remote_datasource/auth_remote_data_source.dart';
 
 @Injectable(as: AuthRemoteDataSource)
@@ -37,4 +38,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return Success(data: response);
     });
   }
+
+  @override
+  Future<ApiResults<AuthResponseDto>> signIn(String email, String password) =>
+      safeCall(() async {
+        var response = await client.signIn(
+          SignInRequestDto(email: email, password: password),
+        );
+        if ((response.message ?? "").contains('Incorrect email or password')) {
+          return Fail(
+            exception: InvalidUserCredentials(),
+            message: response.message,
+          );
+        }
+        return Success(data: response);
+      });
 }

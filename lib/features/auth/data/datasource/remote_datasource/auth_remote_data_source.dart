@@ -9,4 +9,6 @@ abstract interface class AuthRemoteDataSource {
     String password,
     String rePassword,
   );
+
+  Future<ApiResults<AuthResponseDto>> signIn(String email, String password);
 }
