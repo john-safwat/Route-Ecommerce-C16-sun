@@ -61,7 +61,8 @@ class AppTheme {
       ),
 
       inputDecorationTheme: InputDecorationTheme(
-        filled: false,
+        filled: true,
+        fillColor: AppColors.white,
         focusColor: colorScheme.primary,
         hintStyle: GoogleFonts.poppins(
           fontSize: 14,
@@ -93,7 +94,7 @@ class AppTheme {
       ),
 
 
-      elevatedButtonTheme: ElevatedButtonThemeData(
+      filledButtonTheme: FilledButtonThemeData(
         style: ButtonStyle(
           backgroundColor: WidgetStateProperty.all(colorScheme.primary),
           foregroundColor: WidgetStateProperty.all(colorScheme.onPrimary),
@@ -102,6 +103,18 @@ class AppTheme {
           ),
           padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
             const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          ),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all(colorScheme.surface),
+          foregroundColor: WidgetStateProperty.all(colorScheme.primary),
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          ),
+          padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
+            const EdgeInsets.all(16),
           ),
         ),
       ),
