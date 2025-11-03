@@ -37,7 +37,7 @@ class _LoginViewState extends State<LoginView> {
           }
         case NavigateToHome():
           {
-            // todo add navigation to home screen
+            Navigator.pushReplacementNamed(context, Routes.navigationRoute);
           }
         case ShowErrorMessage():
           {
@@ -156,7 +156,7 @@ class _LoginViewState extends State<LoginView> {
                     },
                     child: state.loginResource.status == Status.loading? CircularProgressIndicator(
                       color: Theme.of(context).colorScheme.primary,
-                    ): Text("Login"),
+                    ): const Text("Login"),
                   ),
             ),
             16.spaceVertical,

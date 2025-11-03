@@ -8,18 +8,22 @@ import 'package:route_e_commerce_v2/core/providers/app_config_provider.dart';
 import 'package:route_e_commerce_v2/core/routing/app_router.dart';
 import 'package:route_e_commerce_v2/core/routing/routes.dart';
 import 'package:route_e_commerce_v2/core/theme/app_theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await configureDependencies();
+  var isLoggedIn = getIt<SharedPreferences>().getString("token") != null;
   ChuckerFlutter.showNotification = true;
-  runApp(const MyApp());
+  runApp(MyApp(isLoggedIn: isLoggedIn));
   FlutterNativeSplash.remove();
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn;
+
+  const MyApp({required this.isLoggedIn, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +38,8 @@ class MyApp extends StatelessWidget {
         locale: const Locale("en"),
         theme: AppTheme.getLightThemeData(),
         onGenerateRoute: AppRouter.generateRoute,
-        navigatorObservers: [
-          ChuckerFlutter.navigatorObserver
-        ],
-        initialRoute: Routes.loginRoute,
+        navigatorObservers: [ChuckerFlutter.navigatorObserver],
+        initialRoute: isLoggedIn ? Routes.navigationRoute : Routes.loginRoute,
       ),
     );
   }

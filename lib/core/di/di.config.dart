@@ -45,7 +45,6 @@ extension GetItInjectableX on _i174.GetIt {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final dioModule = _$DioModule();
     final sharedPreferencesModule = _$SharedPreferencesModule();
-    gh.factory<_i361.Dio>(() => dioModule.provideDio());
     gh.factory<_i528.PrettyDioLogger>(() => dioModule.dioLogger());
     gh.factory<_i635.ChuckerDioInterceptor>(
       () => dioModule.provideChuckerInterceptor(),
@@ -58,10 +57,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i128.AuthLocalDatasource>(
       () => _i750.AuthLocalDatasourceImpl(gh<_i460.SharedPreferences>()),
     );
-    gh.singleton<_i502.ApiClient>(() => _i502.ApiClient(gh<_i361.Dio>()));
+    gh.factory<_i361.Dio>(
+      () => dioModule.provideDio(gh<_i460.SharedPreferences>()),
+    );
     gh.singleton<_i56.AppConfigProvider>(
       () => _i56.AppConfigProvider(gh<_i460.SharedPreferences>()),
     );
+    gh.singleton<_i502.ApiClient>(() => _i502.ApiClient(gh<_i361.Dio>()));
     gh.factory<_i398.AuthRemoteDataSource>(
       () => _i852.AuthRemoteDataSourceImpl(gh<_i502.ApiClient>()),
     );
