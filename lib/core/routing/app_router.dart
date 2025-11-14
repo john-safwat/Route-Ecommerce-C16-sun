@@ -7,9 +7,7 @@ import 'package:route_e_commerce_v2/features/auth/presentation/login/login_cubit
 import 'package:route_e_commerce_v2/features/auth/presentation/login/login_view.dart';
 import 'package:route_e_commerce_v2/features/auth/presentation/register/register_cubit.dart';
 import 'package:route_e_commerce_v2/features/auth/presentation/register/register_view.dart';
-
-import 'package:route_e_commerce_v2/core/routing/routes.dart';
-import 'package:route_e_commerce_v2/features/navigation_layout/navigation_view.dart';
+import 'package:route_e_commerce_v2/features/commerce/presentation/navigation_layout/navigation_view.dart';
 
 abstract class AppRouter {
   static Route generateRoute(RouteSettings settings) {

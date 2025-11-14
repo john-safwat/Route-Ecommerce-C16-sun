@@ -11,6 +11,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:chucker_flutter/chucker_flutter.dart' as _i635;
 import 'package:dio/dio.dart' as _i361;
+import 'package:flutter/material.dart' as _i409;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:pretty_dio_logger/pretty_dio_logger.dart' as _i528;
@@ -32,7 +33,27 @@ import '../../features/auth/domain/use_cases/signin_use_case.dart' as _i633;
 import '../../features/auth/domain/use_cases/signup_use_case.dart' as _i571;
 import '../../features/auth/presentation/login/login_cubit.dart' as _i644;
 import '../../features/auth/presentation/register/register_cubit.dart' as _i837;
+import '../../features/commerce/data/datasource/banners_local_datasource/banners_local_datasource.dart'
+    as _i484;
+import '../../features/commerce/data/datasource/banners_local_datasource/banners_local_datasource_impl.dart'
+    as _i209;
+import '../../features/commerce/data/datasource/categories_remote_datasource/categories_remote_datasource.dart'
+    as _i292;
+import '../../features/commerce/data/datasource/categories_remote_datasource/categories_remote_datasource_impl.dart'
+    as _i143;
+import '../../features/commerce/data/mappers/home_mapper.dart' as _i488;
+import '../../features/commerce/data/repository/home_repo_impl.dart' as _i405;
+import '../../features/commerce/domain/repository/home_repo.dart' as _i259;
+import '../../features/commerce/domain/use_case/get_banners_use_case.dart'
+    as _i835;
+import '../../features/commerce/domain/use_case/get_categories_use_case.dart'
+    as _i879;
+import '../../features/commerce/domain/use_case/get_home_data_use_case.dart'
+    as _i679;
+import '../../features/commerce/presentation/navigation_layout/tabs/home/home_cubit.dart'
+    as _i972;
 import '../providers/app_config_provider.dart' as _i56;
+import 'modules/asset_bundle_module.dart' as _i574;
 import 'modules/dio_module.dart' as _i983;
 import 'modules/shared_preferences_module.dart' as _i813;
 
@@ -45,6 +66,7 @@ extension GetItInjectableX on _i174.GetIt {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final dioModule = _$DioModule();
     final sharedPreferencesModule = _$SharedPreferencesModule();
+    final assetBundleModule = _$AssetBundleModule();
     gh.factory<_i528.PrettyDioLogger>(() => dioModule.dioLogger());
     gh.factory<_i635.ChuckerDioInterceptor>(
       () => dioModule.provideChuckerInterceptor(),
@@ -54,8 +76,13 @@ extension GetItInjectableX on _i174.GetIt {
       preResolve: true,
     );
     gh.factory<_i496.AuthMapper>(() => _i496.AuthMapper());
+    gh.factory<_i488.HomeMapper>(() => _i488.HomeMapper());
+    gh.singleton<_i409.AssetBundle>(() => assetBundleModule.getAssetBundle());
     gh.factory<_i128.AuthLocalDatasource>(
       () => _i750.AuthLocalDatasourceImpl(gh<_i460.SharedPreferences>()),
+    );
+    gh.factory<_i484.BannersLocalDatasource>(
+      () => _i209.BannersLocalDatasourceImpl(gh<_i409.AssetBundle>()),
     );
     gh.factory<_i361.Dio>(
       () => dioModule.provideDio(gh<_i460.SharedPreferences>()),
@@ -64,8 +91,33 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i56.AppConfigProvider(gh<_i460.SharedPreferences>()),
     );
     gh.singleton<_i502.ApiClient>(() => _i502.ApiClient(gh<_i361.Dio>()));
+    gh.factory<_i292.CategoriesRemoteDatasource>(
+      () => _i143.CategoriesRemoteDatasourceImpl(gh<_i502.ApiClient>()),
+    );
+    gh.factory<_i259.HomeRepo>(
+      () => _i405.HomeRepoImpl(
+        gh<_i484.BannersLocalDatasource>(),
+        gh<_i488.HomeMapper>(),
+        gh<_i292.CategoriesRemoteDatasource>(),
+      ),
+    );
+    gh.factory<_i835.GetBannersUseCase>(
+      () => _i835.GetBannersUseCase(gh<_i259.HomeRepo>()),
+    );
+    gh.factory<_i879.GetCategoriesUseCase>(
+      () => _i879.GetCategoriesUseCase(gh<_i259.HomeRepo>()),
+    );
+    gh.factory<_i679.GetHomeDataUseCase>(
+      () => _i679.GetHomeDataUseCase(
+        gh<_i879.GetCategoriesUseCase>(),
+        gh<_i835.GetBannersUseCase>(),
+      ),
+    );
     gh.factory<_i398.AuthRemoteDataSource>(
       () => _i852.AuthRemoteDataSourceImpl(gh<_i502.ApiClient>()),
+    );
+    gh.factory<_i972.HomeCubit>(
+      () => _i972.HomeCubit(gh<_i679.GetHomeDataUseCase>()),
     );
     gh.factory<_i976.AuthRepo>(
       () => _i751.AuthRepoImpl(
@@ -92,3 +144,5 @@ extension GetItInjectableX on _i174.GetIt {
 class _$DioModule extends _i983.DioModule {}
 
 class _$SharedPreferencesModule extends _i813.SharedPreferencesModule {}
+
+class _$AssetBundleModule extends _i574.AssetBundleModule {}
