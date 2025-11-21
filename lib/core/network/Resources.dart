@@ -14,9 +14,8 @@ class Resources<T> {
       exception = null;
 
   // loading
-  const Resources.loading()
+  const Resources.loading({this.data})
     : status = Status.loading,
-      data = null,
       exception = null;
 
   // success

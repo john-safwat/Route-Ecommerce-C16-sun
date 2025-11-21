@@ -8,7 +8,7 @@ abstract class HomeSectionFactory<T extends HomeSection> {
     switch (data.status) {
       case Status.success:
         {
-          return buildLoadingUI(data, doAction);
+          return buildSuccessUI(data, doAction);
         }
       case Status.loading:
       case Status.initial:

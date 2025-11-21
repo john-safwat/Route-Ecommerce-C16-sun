@@ -41,17 +41,38 @@ import '../../features/commerce/data/datasource/categories_remote_datasource/cat
     as _i292;
 import '../../features/commerce/data/datasource/categories_remote_datasource/categories_remote_datasource_impl.dart'
     as _i143;
+import '../../features/commerce/data/datasource/products_remote_datasource/product_remote_datasource.dart'
+    as _i346;
+import '../../features/commerce/data/datasource/products_remote_datasource/product_remote_datasource_impl.dart'
+    as _i158;
 import '../../features/commerce/data/mappers/home_mapper.dart' as _i488;
+import '../../features/commerce/data/mappers/products_mapper.dart' as _i192;
 import '../../features/commerce/data/repository/home_repo_impl.dart' as _i405;
+import '../../features/commerce/data/repository/products_repo_impl.dart'
+    as _i732;
 import '../../features/commerce/domain/repository/home_repo.dart' as _i259;
+import '../../features/commerce/domain/repository/products_repo.dart' as _i235;
 import '../../features/commerce/domain/use_case/get_banners_use_case.dart'
     as _i835;
 import '../../features/commerce/domain/use_case/get_categories_use_case.dart'
     as _i879;
 import '../../features/commerce/domain/use_case/get_home_data_use_case.dart'
     as _i679;
+import '../../features/commerce/domain/use_case/get_products_list_use_case.dart'
+    as _i937;
+import '../../features/commerce/presentation/navigation_layout/tabs/categories/categories_cubit.dart'
+    as _i51;
 import '../../features/commerce/presentation/navigation_layout/tabs/home/home_cubit.dart'
     as _i972;
+import '../../features/commerce/presentation/products/products_cubit.dart'
+    as _i866;
+import '../../features/order/data/datasource/orders_datasource.dart' as _i655;
+import '../../features/order/data/datasource/orders_datasource_impl.dart'
+    as _i27;
+import '../../features/order/data/mapper/order_mapper.dart' as _i558;
+import '../../features/order/data/repository/orders_repo_impl.dart' as _i836;
+import '../../features/order/domain/repository/order_repo.dart' as _i266;
+import '../../features/order/presentation/order/orders_cubit.dart' as _i978;
 import '../providers/app_config_provider.dart' as _i56;
 import 'modules/asset_bundle_module.dart' as _i574;
 import 'modules/dio_module.dart' as _i983;
@@ -77,6 +98,8 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i496.AuthMapper>(() => _i496.AuthMapper());
     gh.factory<_i488.HomeMapper>(() => _i488.HomeMapper());
+    gh.factory<_i192.ProductsMapper>(() => _i192.ProductsMapper());
+    gh.factory<_i558.OrderMapper>(() => _i558.OrderMapper());
     gh.singleton<_i409.AssetBundle>(() => assetBundleModule.getAssetBundle());
     gh.factory<_i128.AuthLocalDatasource>(
       () => _i750.AuthLocalDatasourceImpl(gh<_i460.SharedPreferences>()),
@@ -91,8 +114,17 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i56.AppConfigProvider(gh<_i460.SharedPreferences>()),
     );
     gh.singleton<_i502.ApiClient>(() => _i502.ApiClient(gh<_i361.Dio>()));
+    gh.factory<_i655.OrdersDatasource>(
+      () => _i27.OrdersDatasourceImpl(gh<_i502.ApiClient>()),
+    );
     gh.factory<_i292.CategoriesRemoteDatasource>(
       () => _i143.CategoriesRemoteDatasourceImpl(gh<_i502.ApiClient>()),
+    );
+    gh.factory<_i266.OrderRepo>(
+      () => _i836.OrdersRepoImpl(
+        gh<_i655.OrdersDatasource>(),
+        gh<_i558.OrderMapper>(),
+      ),
     );
     gh.factory<_i259.HomeRepo>(
       () => _i405.HomeRepoImpl(
@@ -116,6 +148,21 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i398.AuthRemoteDataSource>(
       () => _i852.AuthRemoteDataSourceImpl(gh<_i502.ApiClient>()),
     );
+    gh.factory<_i346.ProductRemoteDatasource>(
+      () => _i158.ProductRemoteDatasourceImpl(gh<_i502.ApiClient>()),
+    );
+    gh.factory<_i51.CategoriesCubit>(
+      () => _i51.CategoriesCubit(gh<_i879.GetCategoriesUseCase>()),
+    );
+    gh.singleton<_i978.OrdersCubit>(
+      () => _i978.OrdersCubit(gh<_i266.OrderRepo>()),
+    );
+    gh.factory<_i235.ProductsRepo>(
+      () => _i732.ProductsRepoImpl(
+        gh<_i346.ProductRemoteDatasource>(),
+        gh<_i192.ProductsMapper>(),
+      ),
+    );
     gh.factory<_i972.HomeCubit>(
       () => _i972.HomeCubit(gh<_i679.GetHomeDataUseCase>()),
     );
@@ -124,6 +171,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i398.AuthRemoteDataSource>(),
         gh<_i128.AuthLocalDatasource>(),
       ),
+    );
+    gh.factory<_i937.GetProductsListUseCase>(
+      () => _i937.GetProductsListUseCase(gh<_i235.ProductsRepo>()),
+    );
+    gh.factory<_i866.ProductsCubit>(
+      () => _i866.ProductsCubit(gh<_i937.GetProductsListUseCase>()),
     );
     gh.factory<_i571.SignupUseCase>(
       () => _i571.SignupUseCase(gh<_i976.AuthRepo>()),

@@ -15,20 +15,20 @@ class GetHomeDataUseCase {
 
   Future<List<ApiResults<HomeSection>>> getHomeData() async {
     var result = await Future.wait([
-      getCategoriesUseCase.getCategories(),
       getBannersUseCase.getBanners(),
+      getCategoriesUseCase.getCategories(),
     ]);
     List<ApiResults<HomeSection>> results = [];
     for (var element in result) {
       switch (element) {
         case Success<List<Object>>():
           {
-            if (result.indexOf(element) == 0) {
+            if (result.indexOf(element) == 1) {
               var categories = element.data as List<CategoryEntity>;
-              HomeCategorySection(categories, 1);
+              results.add(Success(data: HomeCategorySection(categories, 1)));
             } else {
               var banners = element.data as List<BannerEntity>;
-              HomeBannersSection(banners, 0);
+              results.add(Success(data: HomeBannersSection(banners, 0)));
             }
           }
         case Fail<List<Object>>():

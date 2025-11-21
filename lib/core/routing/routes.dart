@@ -3,4 +3,5 @@ abstract class Routes {
 
   static const String registerRoute = "/register";
   static const String navigationRoute = "/navigation";
+  static const String productsRoute = "/products";
 }

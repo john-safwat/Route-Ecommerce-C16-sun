@@ -5,6 +5,8 @@ import 'package:route_e_commerce_v2/features/auth/data/datasource/models/auth_re
 import 'package:route_e_commerce_v2/features/auth/data/datasource/models/register_request_dto.dart';
 import 'package:route_e_commerce_v2/features/auth/data/datasource/models/signin_request_dto.dart';
 import 'package:route_e_commerce_v2/features/commerce/data/datasource/categories_remote_datasource/models/categories_response_dto.dart';
+import 'package:route_e_commerce_v2/features/commerce/data/datasource/products_remote_datasource/models/products_response_dto.dart';
+import 'package:route_e_commerce_v2/features/order/data/datasource/models/CartResponseDto.dart';
 
 part 'api_client.g.dart';
 
@@ -22,4 +24,24 @@ abstract class ApiClient {
 
   @GET("/api/v1/categories")
   Future<CategoriesResponseDto> getCategories();
+
+  @GET("/api/v1/products")
+  Future<ProductsResponseDto> getProducts(
+    @Query("category[in]") String category,
+  );
+
+  @GET("/api/v1/cart")
+  Future<CartResponseDto> getCart();
+
+  @POST("/api/v1/cart")
+  Future<CartResponseDto> addProductToCart(@Body() Map<String, dynamic> body);
+
+  @PUT("/api/v1/cart/{productId}")
+  Future<CartResponseDto> updateProductToCart(
+    @Path("productId") String id,
+    @Body() Map<String, dynamic> body,
+  );
+
+  @PUT("/api/v1/cart/{productId}")
+  Future<CartResponseDto> deleteProductToCart(@Path("productId") String id);
 }

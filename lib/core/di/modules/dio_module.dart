@@ -25,6 +25,7 @@ abstract class DioModule {
 
     if (token != null) {
       dio.options.headers = {"Authorization": "Bearer $token"};
+      dio.options.headers = {"token": token};
     }
 
     dio.interceptors.add(getIt<PrettyDioLogger>());

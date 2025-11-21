@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:route_e_commerce_v2/core/di/di.dart';
 import 'package:route_e_commerce_v2/core/theme/app_colors.dart';
-import 'package:route_e_commerce_v2/features/commerce/presentation/navigation_layout/tabs/categories/categories_tab_view.dart';
+import 'package:route_e_commerce_v2/core/utils/white_space.dart';
+  import 'package:route_e_commerce_v2/features/commerce/presentation/navigation_layout/tabs/categories/categories_tab_view.dart';
 import 'package:route_e_commerce_v2/features/commerce/presentation/navigation_layout/tabs/favorite/favorite_tab_view.dart';
 import 'package:route_e_commerce_v2/features/commerce/presentation/navigation_layout/tabs/home/home_tab_view.dart';
 import 'package:route_e_commerce_v2/features/commerce/presentation/navigation_layout/tabs/profile/profile_tab_view.dart';
 import 'package:route_e_commerce_v2/features/commerce/presentation/navigation_layout/widgets/home_bottom_navigation_bar_item.dart';
+import 'package:route_e_commerce_v2/features/order/presentation/order/orders_contract.dart';
+import 'package:route_e_commerce_v2/features/order/presentation/order/orders_cubit.dart';
 class NavigationView extends StatefulWidget {
   const NavigationView({super.key});
 
@@ -15,6 +19,13 @@ class NavigationView extends StatefulWidget {
 
 class _NavigationViewState extends State<NavigationView> {
   ValueNotifier<int> index = ValueNotifier(0);
+  OrdersCubit ordersCubit = getIt();
+
+  @override
+  void initState() {
+    super.initState();
+    ordersCubit.doAction(GetCartEvent());
+  }
 
   List<Widget> pages = [
     const HomeTabView(),
@@ -29,7 +40,28 @@ class _NavigationViewState extends State<NavigationView> {
       valueListenable: index,
       builder:
           (context, value, child) => Scaffold(
-            body: pages[value],
+            body: SafeArea(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        Expanded(child: TextFormField(
+                          decoration: const InputDecoration(
+                            hintText: "Search",
+                            prefixIcon: Icon(Icons.search),
+                          ),
+                        )),
+                        16.spaceHorizontal,
+                        const Icon(Icons.shopping_cart_rounded , color: AppColors.blue, size: 40,)
+                      ],
+                    ),
+                  ),
+                  Expanded(child: pages[value]),
+                ],
+              ),
+            ),
             bottomNavigationBar: ClipRRect(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(24),

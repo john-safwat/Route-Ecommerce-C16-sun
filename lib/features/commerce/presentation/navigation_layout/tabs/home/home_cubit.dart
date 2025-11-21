@@ -26,9 +26,13 @@ class HomeCubit extends BaseCubit<HomeState, HomeEvents, HomeNavigationEvent> {
   Future<void> _loadData() async {
     emit(
       state.copyWith(
-        homeData: const [
-          Resources<HomeBannersSection>.loading(),
-          Resources<HomeCategorySection>.loading(),
+        homeData: [
+          Resources<HomeBannersSection>.loading(
+            data: HomeBannersSection([], 0),
+          ),
+          Resources<HomeCategorySection>.loading(
+            data: HomeCategorySection([], 1),
+          ),
         ],
       ),
     );
@@ -38,7 +42,18 @@ class HomeCubit extends BaseCubit<HomeState, HomeEvents, HomeNavigationEvent> {
       switch (section) {
         case Success<HomeSection>():
           {
-            homeSections.add(Resources.success(data: section.data));
+            switch (section.data) {
+              case null:
+                homeSections.add(Resources.success(data: section.data));
+              case HomeBannersSection():
+                homeSections.add(
+                  Resources.success(data: section.data as HomeBannersSection),
+                );
+              case HomeCategorySection():
+                homeSections.add(
+                  Resources.success(data: section.data as HomeCategorySection),
+                );
+            }
           }
         case Fail<HomeSection>():
           {
@@ -46,6 +61,7 @@ class HomeCubit extends BaseCubit<HomeState, HomeEvents, HomeNavigationEvent> {
           }
       }
     }
+    print(homeSections);
     emit(state.copyWith(homeData: homeSections));
   }
 }
